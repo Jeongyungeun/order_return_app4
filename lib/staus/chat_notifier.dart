@@ -3,6 +3,11 @@ import 'package:order_return_app4/model/chat_model.dart';
 import 'package:order_return_app4/model/chat_room_model.dart';
 import 'package:order_return_app4/repository/chat_service.dart';
 
+/// 내가 챗을 입력할때 firestore로 들어갔다 화면에 뿌려주는건 아무래도 느리다.
+/// 그래서 내가 입력하는건 미리 notifier 를 이용해서 뿌려주고 그건 그거대로 firestore에 저장한다.
+
+
+
 class ChatNotifier extends ChangeNotifier{
   ChatroomModel? _chatroomModel;
 

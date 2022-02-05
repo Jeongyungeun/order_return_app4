@@ -6,6 +6,8 @@ import 'package:order_return_app4/constant/firebase_key.dart';
 import 'package:order_return_app4/model/chat_model.dart';
 import 'package:order_return_app4/model/chat_room_model.dart';
 
+//singleton 유지
+
 class ChatService {
   static final ChatService _chatService = ChatService._internal();
   factory ChatService() => _chatService;
@@ -20,6 +22,7 @@ class ChatService {
             ChatroomModel.generateChatroomKey(
                 chatroomModel.userKey, chatroomModel.yourKey));
     final DocumentSnapshot documentSnapshot = await documentReference.get();
+//이미 존재하는지 확인.
 
     if (!documentSnapshot.exists) {
       await documentReference.set(chatroomModel.toJson());
@@ -138,7 +141,7 @@ class ChatService {
     QuerySnapshot<Map<String, dynamic>> firstChat = await FirebaseFirestore
         .instance
         .collection(COL_CHATROOMS)
-        .where(DOC_YOURKEY, isEqualTo: myUserKey)
+        .where(DOC_USERKEY, isEqualTo: myUserKey)
         .get();
 
     QuerySnapshot<Map<String, dynamic>> lastChat = await FirebaseFirestore

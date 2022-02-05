@@ -21,9 +21,9 @@ class ChatroomModel {
   ChatroomModel({
     required this.userKey,
     required this.yourKey,
-    required this.lastMsg,
+    this.lastMsg='',
     required this.lstMsgTime,
-    required this.lstMsgUserKey,
+    this.lstMsgUserKey='',
     required this.chatroomKey,
     this.reference,});
 
@@ -33,18 +33,16 @@ class ChatroomModel {
     lastMsg = json[DOC_LASTMSG] ?? '';
     lstMsgTime = json[DOC_LASTMSGTIME] ?? '';
     lstMsgUserKey = json[DOC_LSTMSGUSERKEY]?? '';
-    chatroomKey = json[DOC_CHATROOMKEY]?? '';
   }
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['myKey'] = userKey;
-    map['yourKey'] = yourKey;
-    map['lastMsg'] = lastMsg;
-    map['lstMsgTime'] = lstMsgTime;
-    map['lstMsgUserKey'] = lstMsgUserKey;
-    map['chatroomKey'] = chatroomKey;
-    map['reference'] = reference;
+    map[DOC_USERKEY] = userKey;
+    map[DOC_YOURKEY] = yourKey;
+    map[DOC_LASTMSG] = lastMsg;
+    map[DOC_LASTMSGTIME] = lstMsgTime;
+    map[DOC_LSTMSGUSERKEY] = lstMsgUserKey;
+    map[DOC_CHATROOMKEY] = chatroomKey;
     return map;
   }
   ChatroomModel.fromQuerySnapshot(
@@ -55,8 +53,8 @@ class ChatroomModel {
   ChatroomModel.fromSnapShot(DocumentSnapshot<Map<String, dynamic>> snapshot)
   : this.fromJson(snapshot.data()!, snapshot.id, snapshot.reference);
 
-  static String generateChatroomKey(String myKey, String yoursKey){
-    return '${myKey}_${yoursKey}';
+  static String generateChatroomKey(String userKey, String yoursKey){
+    return '${userKey}_${yoursKey}';
   }
 
 }

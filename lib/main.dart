@@ -13,8 +13,8 @@ final _routerDelegate = BeamerDelegate(
     BeamGuard(
         pathPatterns: [
           ...HomeLocation().pathPatterns,
-          ...HomeScreenToContactPharm().pathPatterns,
-          ...HomeLocationComp().pathPatterns,
+          ...ChatroomForPharmLocation().pathPatterns,
+
         ],
         check: (BuildContext context, BeamLocation location) {
           return context.watch<UserNotifier>().user != null;
@@ -26,8 +26,7 @@ final _routerDelegate = BeamerDelegate(
   ],
   locationBuilder: BeamerLocationBuilder(beamLocations: [
     HomeLocation(),
-    HomeScreenToContactPharm(),
-    HomeLocationComp(),
+    ChatroomForPharmLocation(),
   ]),
 );
 

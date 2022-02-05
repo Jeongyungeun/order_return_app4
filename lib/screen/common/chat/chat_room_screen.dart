@@ -26,16 +26,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 onTap: () {
                   FocusScope.of(context).unfocus();
                 },
-                child: Container(),
+                child: Container(color: Colors.amber,),
               ),
             ),
+            _buildInputBar()
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInputBar(UserModel userModel) {
+  Widget _buildInputBar() {
     return SizedBox(
       height: 62,
       child: Column(

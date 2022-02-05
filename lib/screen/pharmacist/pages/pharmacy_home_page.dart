@@ -1,8 +1,13 @@
+import 'package:beamer/src/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:order_return_app4/constant/widget_design.dart';
+import 'package:order_return_app4/model/chat_room_model.dart';
 import 'package:order_return_app4/model/contact_model.dart';
+import 'package:order_return_app4/model/user_model.dart';
 import 'package:order_return_app4/repository/business_card_service.dart';
+import 'package:order_return_app4/repository/chat_service.dart';
+import 'package:order_return_app4/router/location.dart';
 import 'package:order_return_app4/screen/common/camera_picker_custom.dart';
 import 'package:order_return_app4/screen/common/contact_card.dart';
 import 'package:order_return_app4/widget/costum_expandable_fab.dart';
@@ -10,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class PharmacyHomePage extends StatefulWidget {
   final String userKey;
+
   PharmacyHomePage({Key? key, required this.userKey}) : super(key: key);
 
   @override
@@ -158,7 +164,8 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
                       contactModel.company != null
                           ? '${contactModel.company}'
                           : '',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700 ),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                     ),
                     SizedBox(
                       width: 20,
@@ -177,9 +184,15 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
             ),
             Row(
               children: [
-                IconButton(onPressed: () {makePhoneCall('tel://${phone}');}, icon: Icon(Icons.phone)),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      makePhoneCall('tel://${phone}');
+                    },
+                    icon: Icon(Icons.phone)),
+                IconButton(
+                    onPressed: () {
+                      _goToChatroom(contactModel);
+                    },
                     icon: Icon(Icons.chat_bubble_outline_rounded)),
               ],
             )
@@ -188,6 +201,7 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
       ),
     );
   }
+
 //
   //
   SliverAppBar _appBarText() {
@@ -209,14 +223,27 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
     setState(() {});
   }
 
-
   //DialLog를 보여주면 좋을듯
-  void makePhoneCall(String phoneNum) async{
-    if (await canLaunch(phoneNum)){
+  void makePhoneCall(String phoneNum) async {
+    if (await canLaunch(phoneNum)) {
       await launch(phoneNum);
       print('전화걸기 성공');
-    }else {
+    } else {
       print('전화걸기 실패');
     }
+  }
+
+  void _goToChatroom(ContactModel contactModel) async{
+    String chatroomKey = ChatroomModel.generateChatroomKey(
+        contactModel.userKey, contactModel.cardKey);
+    ChatroomModel _chatroomModel = ChatroomModel(
+        userKey: contactModel.userKey,
+        yourKey: contactModel.cardKey,
+        chatroomKey: chatroomKey,
+        lstMsgTime: DateTime.now());
+
+    await ChatService().createNewChatroom(_chatroomModel);
+
+    context.beamToNamed('/$LOCATION_PHARM/:$chatroomKey');
   }
 }
