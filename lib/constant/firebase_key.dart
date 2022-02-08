@@ -24,4 +24,8 @@ const DOC_LASTMSGTIME = 'lastMsgTime';
 const DOC_LSTMSGUSERKEY = 'lstMsgUserKey';
 const DOC_CHATROOMKEY = 'chatroomKey';
 
+const DOC_ORDERPRODUCT = 'orderProduct';
+const DOC_ORDERNUM = 'orderNum';
+const DOC_ORDERMSG = 'orderMsg';
+
 const DOC_MSG= 'msg';

@@ -30,6 +30,11 @@ class ChatNotifier extends ChangeNotifier{
         if(_chatList[0].reference == null){
           _chatList.removeAt(0);
         }
+        ChatService().getLatestChats(_chatroomKey, _chatList[0].reference!)
+        .then((latestChat) {
+          _chatList.insertAll(0, latestChat);
+          notifyListeners();
+        });
       }
     });
   }

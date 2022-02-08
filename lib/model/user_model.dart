@@ -38,6 +38,10 @@ class UserModel {
   UserModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : this.fromJson(snapshot.data()!, snapshot.id, snapshot.reference);
 
+  UserModel.fromQuerySnapshot(
+      QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
+      : this.fromJson(snapshot.data(), snapshot.id, snapshot.reference);
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map[DOC_PHONENUMBER] = phoneNumber;

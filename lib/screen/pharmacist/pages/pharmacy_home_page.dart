@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:order_return_app4/constant/widget_design.dart';
 import 'package:order_return_app4/model/chat_room_model.dart';
 import 'package:order_return_app4/model/contact_model.dart';
-import 'package:order_return_app4/model/user_model.dart';
 import 'package:order_return_app4/repository/business_card_service.dart';
 import 'package:order_return_app4/repository/chat_service.dart';
 import 'package:order_return_app4/router/location.dart';
@@ -12,6 +11,8 @@ import 'package:order_return_app4/screen/common/camera_picker_custom.dart';
 import 'package:order_return_app4/screen/common/contact_card.dart';
 import 'package:order_return_app4/widget/costum_expandable_fab.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../logger/logger.dart';
 
 class PharmacyHomePage extends StatefulWidget {
   final String userKey;
@@ -26,6 +27,8 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
   Size? _size;
   final List<ContactModel> _list = [];
   int? back;
+  String? _getOppositNum;
+  String? getOppositKey;
 
   bool init = false;
 
@@ -122,14 +125,19 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
         ));
   }
 
-  Card _buildCardAtHome(int index) {
+  Future<Card> _buildCardAtHome(int index) async{
     ContactModel contactModel = _list[index];
-    String phone = contactModel.phoneNum.replaceFirst('+82', '0');
+    String databasePhone = contactModel.phoneNum;
+    String phone = databasePhone.replaceFirst('+82', '0');
     String hypenPhone = phone.substring(0, 3) +
         '-' +
         phone.substring(3, 7) +
         '-' +
         phone.substring(7, phone.length);
+    await ChatService().getUserInfo(databasePhone).then((value) {
+      String oppositePhoneForUser = value[0].phoneNumber;
+    });
+
     return Card(
       semanticContainer: true,
       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -190,8 +198,10 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
                     },
                     icon: Icon(Icons.phone)),
                 IconButton(
-                    onPressed: () {
-                      _goToChatroom(contactModel);
+                    onPressed: () async {
+                      await isExistedUser(contactModel.phoneNum)
+                          ? _goToChatroom(contactModel)
+                          : logger.e('사용자가 존재하지 않습니다.');
                     },
                     icon: Icon(Icons.chat_bubble_outline_rounded)),
               ],
@@ -233,9 +243,12 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
     }
   }
 
-  void _goToChatroom(ContactModel contactModel) async{
+  void _goToChatroom(ContactModel contactModel) async {
     String chatroomKey = ChatroomModel.generateChatroomKey(
         contactModel.userKey, contactModel.cardKey);
+    //이상하게 ':'이 붙는다.
+    String fixchatroomKey = chatroomKey.replaceFirst(':', '');
+
     ChatroomModel _chatroomModel = ChatroomModel(
         userKey: contactModel.userKey,
         yourKey: contactModel.cardKey,
@@ -244,6 +257,14 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
 
     await ChatService().createNewChatroom(_chatroomModel);
 
-    context.beamToNamed('/$LOCATION_PHARM/:$chatroomKey');
+    context.beamToNamed('/$LOCATION_PHARM/:$fixchatroomKey');
+  }
+
+  Future<bool> isExistedUser(String phone) async {
+    ChatService().getUserInfo(phone).then((userModel) {
+      _getOppositNum = userModel[0].phoneNumber;
+      getOppositKey = userModel[0].userKey;
+    });
+    return _getOppositNum == phone;
   }
 }

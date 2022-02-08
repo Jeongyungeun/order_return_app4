@@ -31,7 +31,9 @@ class ChatroomModel {
     userKey = json[DOC_USERKEY] ?? '';
     yourKey = json[DOC_YOURKEY] ?? '';
     lastMsg = json[DOC_LASTMSG] ?? '';
-    lstMsgTime = json[DOC_LASTMSGTIME] ?? '';
+    lstMsgTime = json[DOC_LASTMSGTIME] == null
+        ? DateTime.now().toUtc()
+        : (json[DOC_LASTMSGTIME] as Timestamp).toDate();
     lstMsgUserKey = json[DOC_LSTMSGUSERKEY]?? '';
   }
 

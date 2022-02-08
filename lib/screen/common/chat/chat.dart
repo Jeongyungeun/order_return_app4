@@ -77,7 +77,7 @@ class Chat extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text('${dateFormat}'),
+        Text('${dateFormat}', style: TextStyle(fontSize: 7, color: Colors.grey),),
         SizedBox(
           width: 6,
         ),
@@ -85,16 +85,16 @@ class Chat extends StatelessWidget {
           children: [
             Container(
               constraints: BoxConstraints(
-                minHeight: 40,
+                minHeight: 50,
                 maxWidth: size.width * 0.5,
               ),
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               child: Text(
                 chatModel.msg,
-                style: TextStyle(color: Colors.black, fontSize: 12),
+                style: TextStyle(color: Colors.black, fontSize: 15),
               ),
               decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.amber,
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(2),
                       topLeft: roundedCorner,

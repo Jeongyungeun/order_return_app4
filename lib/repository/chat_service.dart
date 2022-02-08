@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:order_return_app4/constant/firebase_key.dart';
 import 'package:order_return_app4/model/chat_model.dart';
 import 'package:order_return_app4/model/chat_room_model.dart';
+import 'package:order_return_app4/model/user_model.dart';
 
 //singleton 유지
 
 class ChatService {
   static final ChatService _chatService = ChatService._internal();
+
   factory ChatService() => _chatService;
+
   ChatService._internal();
 
   ///Create new Chatroom///
@@ -103,6 +105,7 @@ class ChatService {
         .doc(chatroomKey)
         .collection(COL_CHATS)
         .orderBy(DOC_CREATEDDATE, descending: true)
+        .endBeforeDocument(await currentLatestChatRef.get())
         .get();
 
     List<ChatModel> chatlist = [];
@@ -157,8 +160,22 @@ class ChatService {
     lastChat.docs.forEach((documentSnapshot) {
       chatrooms.add(ChatroomModel.fromQuerySnapshot(documentSnapshot));
     });
-    chatrooms.sort((a,b)=>(a.lstMsgTime).compareTo(b.lstMsgTime));
+    chatrooms.sort((a, b) => (a.lstMsgTime).compareTo(b.lstMsgTime));
 
     return chatrooms;
+  }
+
+  ///이용자 정보 가져오기(전화번호로..)
+  Future<List<UserModel>> getUserInfo(String phoneNum) async {
+    List<UserModel> userModel = [];
+    QuerySnapshot<Map<String, dynamic>> oppositPhone = await FirebaseFirestore
+        .instance
+        .collection(COL_USERS)
+        .where('phoneNumber', isEqualTo: phoneNum)
+        .get();
+    oppositPhone.docs.forEach((documentSnapshot) {
+      userModel.add(UserModel.fromQuerySnapshot(documentSnapshot));
+    });
+    return userModel;
   }
 }
