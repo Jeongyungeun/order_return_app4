@@ -389,4 +389,5 @@ enum VerificationsStatus {
   codeSent,
   verify,
   verificationDone
+
 }

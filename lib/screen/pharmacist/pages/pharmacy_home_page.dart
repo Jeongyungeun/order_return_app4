@@ -9,9 +9,9 @@ import 'package:order_return_app4/repository/chat_service.dart';
 import 'package:order_return_app4/router/location.dart';
 import 'package:order_return_app4/screen/common/camera_picker_custom.dart';
 import 'package:order_return_app4/screen/common/contact_card.dart';
-import 'package:order_return_app4/widget/costum_expandable_fab.dart';
+import '../../../widget/costum_expandable_fab.dart';
+import 'C:\/Users/yungeun/Desktop/order_return_init/lib/widget/costum_expandable_fab.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../logger/logger.dart';
 
 class PharmacyHomePage extends StatefulWidget {
@@ -125,19 +125,14 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
         ));
   }
 
-  Future<Card> _buildCardAtHome(int index) async{
+  Widget _buildCardAtHome(int index) {
     ContactModel contactModel = _list[index];
-    String databasePhone = contactModel.phoneNum;
-    String phone = databasePhone.replaceFirst('+82', '0');
+    String phone = contactModel.phoneNum.replaceFirst('+82', '0');
     String hypenPhone = phone.substring(0, 3) +
         '-' +
         phone.substring(3, 7) +
         '-' +
         phone.substring(7, phone.length);
-    await ChatService().getUserInfo(databasePhone).then((value) {
-      String oppositePhoneForUser = value[0].phoneNumber;
-    });
-
     return Card(
       semanticContainer: true,
       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -198,8 +193,14 @@ class _PharmacyHomePageState extends State<PharmacyHomePage> {
                     },
                     icon: Icon(Icons.phone)),
                 IconButton(
-                    onPressed: () async {
-                      await isExistedUser(contactModel.phoneNum)
+                    onPressed: () async{
+                      await ChatService()
+                          .getUserInfo(contactModel.phoneNum)
+                          .then((userModel) {
+                        _getOppositNum = userModel[0].phoneNumber;
+                        getOppositKey = userModel[0].userKey;
+                      });
+                      _getOppositNum == contactModel.phoneNum
                           ? _goToChatroom(contactModel)
                           : logger.e('사용자가 존재하지 않습니다.');
                     },

@@ -30,7 +30,7 @@ final _routerDelegate = BeamerDelegate(
   ]),
 );
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
@@ -82,6 +82,7 @@ class IntermediateForSignInScreen extends StatelessWidget {
         theme: MyTheme.myThemeDataForLight,
         routeInformationParser: BeamerParser(),
         routerDelegate: _routerDelegate,
+
       ),
     );
   }
